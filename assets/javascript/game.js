@@ -10,13 +10,15 @@ var underScore = [];
 
 // DOM manipulation
 var underScoreDoc = document.getElementsByClassName("underScore");
+var rightGuessDoc = document.getElementsByClassName("rightGuess");
+var wrongGuessDoc = document.getElementsByClassName("wrongGuess");
 
+console.log(wordChoice);
 
 // generate underscores for the length of the word
 var generateUnderscore = () => {
     for (var i = 0; i < wordChoice.length; i++) {
         underScore.push("_");
-        underScoreDoc.[0].innerHtml = underScore.join("")
     }
     return underScore;
 }
@@ -28,17 +30,24 @@ document.addEventListener("keypress", (event) => {
     if (wordChoice.indexOf(keyword) > -1) {
         //add to right words array
         rightWord.push(keyword);
-    // replace underscore with right letter
+        // replace underscore with right letter
         underScore[wordChoice.indexOf(keyword)] = keyword;
-    // Checks to see if user word matvhes guesses
-        if(underScore.join("") == wordChoice) {
-            alert("You Win");
+        // Checks to see if user word matches guesses
+        underScoreDoc[0].innerHTML = underScore.join(" ");
+        rightGuessDoc[0].innerHTML = rightWord;
+
+        if(underScore.joim(" ") == wordChoice) {
+            alert("You win!");
         }
     }
     else {
         wrongWord.push(keyword);
+        docWrongGuess[0].innerHTML = wrongWord;
     }
 });
 
 
-generateUnderscore();
+
+
+
+underScoreDoc[0].innerHTML = generateUnderscore().join(" ");

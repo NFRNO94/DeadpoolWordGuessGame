@@ -1,53 +1,103 @@
 // create an array of words for the game
 var gameWords = ["wade", "vanessa", "cable", "colossus", "francis", "juggernaut"];
 
-// select a word randomly from the array
-var randNum = Math.floor(Math.random() * gameWords.length);
-var wordChoice = gameWords[randNum];
-var rightWord = [];
-var wrongWord = [];
-var underScore = [];
+//declare variables for solutions, the solution letters to store strings in array
+// the underscores, to store the correct guesses, and to store the wrong guesses
+var correctWord = "";
+var correctLetters = [];
+var blanks = 0;
+var correctLettersBlanks = [];
+var wrongLetters = [];
 
-// DOM manipulation
-var underScoreDoc = document.getElementsByClassName("underScore");
-var rightGuessDoc = document.getElementsByClassName("rightGuess");
-var wrongGuessDoc = document.getElementsByClassName("wrongGuess");
+//counters for wins, losses, guesses
+var winCount = 0;
+var lossCount = 0;
+var numberGuess = 9;
 
-console.log(wordChoice);
+// start game function
+function gameStart() {
+    
+    numberGuess = 9;
 
-// generate underscores for the length of the word
-var generateUnderscore = () => {
-    for (var i = 0; i < wordChoice.length; i++) {
-        underScore.push("_");
+    correctWord = gameWords[Math.floor(Math.random() * gameWords.length)];
+
+    correctLetters = correctWord.split("");
+
+    blanks = correctLetters.length;
+
+    console.log(correctWord);
+
+    correctLettersBlanks = [];
+
+    wrongLetters = [];
+
+    for(var i = 0; i < blanks; i++) {
+        correctLettersBlanks.push("_");
     }
-    return underScore;
+
+console.log(correctLettersBlanks);
+
+document.getElementById("number-guess").innerHTML = numberGuess;
+document.getElementById("underscore").innerHTML = correctLettersBlanks.join(" ");
+document.getElementById("wrong-guess").innerHTML = wrongLetters.join(" ");
 }
 
-// get user's guess
-document.addEventListener("keypress", (event) => {
-    var keyword = String.fromCharCode(event.keyCode);
-    // if user's guess is right
-    if (wordChoice.indexOf(keyword) > -1) {
-        //add to right words array
-        rightWord.push(keyword);
-        // replace underscore with right letter
-        underScore[wordChoice.indexOf(keyword)] = keyword;
-        // Checks to see if user word matches guesses
-        underScoreDoc[0].innerHTML = underScore.join(" ");
-        rightGuessDoc[0].innerHTML = rightWord;
+function letterChecker(letter) {
 
-        if(underScore.joim(" ") == wordChoice) {
-            alert("You win!");
+    var letterInWord = false;
+
+    for (var i = 0; i < blanks; i++) {
+        if(correctWord[i] === letter) {
+            letterInWord = true;
         }
     }
-    else {
-        wrongWord.push(keyword);
-        docWrongGuess[0].innerHTML = wrongWord;
+
+    if (letterInWord) {
+        for (var j = 0; j < blanks; j++) {
+            if (correctWord[j] === letter) {
+                correctLettersBlanks[j] = letter;
+            }
+        }
+        console.log(correctLettersBlanks);
     }
-});
+    else {
+        wrongLetters.push(letter);
+        numberGuess--;
+    }
+}
 
+function finishRound() {
+    console.log("Wins: " + winCount + " | Losses: " + lossCount + "| Remaining Guesses: " + numberGuess);
 
+    document.getElementById("number-guess").innerHTML = numberGuess;
+    document.getElementById("underscore").innerHTML = correctLettersBlanks.join(" ");
+    document.getElementById("wrong-guess").innerHTML = wrongLetters.join(" ");
 
+    if (correctLetters.toString() === correctLettersBlanks.toString()) {
+        winCount++;
+        alert("You win!");
 
+        document.getElementById("win-count").innerHTML = winCount;
+        gameStart();
+}
+else if (numberGuess === 0) {
+    lossCount++;
+    alert("You lose!!!!!!!!!");
 
-underScoreDoc[0].innerHTML = generateUnderscore().join(" ");
+    document.getElementById("loss-count").innerHTML = lossCount;
+        gameStart();
+    }
+}
+
+gameStart();
+// on key event to collect user's key press to use for comparison to solution
+document.onkeyup = function(event) {
+    if (event.keyCode >= 65 && event.keyCode <= 90) {
+        var userGuess = event.key.toLowerCase();
+
+        letterChecker(userGuess);
+
+        finishRound();
+    }
+};
+
